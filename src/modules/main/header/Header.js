@@ -23,47 +23,9 @@ const Header = ({toggleMenuSidebar}) => {
                         <i className="fas fa-bars" />
                     </button>
                 </li>
-                <li className="nav-item d-none d-sm-inline-block">
-                    <Link to="/" className="nav-link">
-                        {t('header.label.home')}
-                    </Link>
-                </li>
-                <li className="nav-item d-none d-sm-inline-block">
-                    <Link to="/" className="nav-link">
-                        {t('header.label.contact')}
-                    </Link>
-                </li>
             </ul>
-            <form className="form-inline ml-3">
-                <div className="input-group input-group-sm">
-                    <input
-                        className="form-control form-control-navbar"
-                        type="search"
-                        placeholder="Search"
-                        aria-label="Search"
-                    />
-                    <div className="input-group-append">
-                        <button className="btn btn-navbar" type="submit">
-                            <i className="fas fa-search" />
-                        </button>
-                    </div>
-                </div>
-            </form>
             <ul className="navbar-nav ml-auto">
-                <Messages />
-                <Notifications />
-                <Languages />
                 <User />
-                {/* <li className="nav-item">
-          <button
-            className="nav-link"
-            data-widget="control-sidebar"
-            data-slide="true"
-            type="button"
-          >
-            <i className="fas fa-th-large" />
-          </button>
-        </li> */}
             </ul>
         </nav>
     );

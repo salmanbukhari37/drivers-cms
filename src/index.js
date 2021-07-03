@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {Provider} from 'react-redux';
 import {toast} from 'react-toastify';
-import {Gatekeeper} from 'gatekeeper-client-sdk';
 import App from '@app/App';
 import store from '@store';
 
@@ -20,12 +19,6 @@ toast.configure({
     rtl: false,
     pauseOnVisibilityChange: true,
     pauseOnHover: true
-});
-
-Gatekeeper.configure('08401b7e-da7e-4bf3-a9bf-6f594ae5fb02', {
-    googleClientID:
-        '816324818723-e2hokn0pvjgkf8jcks6quido903ukeri.apps.googleusercontent.com',
-    facebookAppID: '243170807046422'
 });
 
 ReactDOM.render(

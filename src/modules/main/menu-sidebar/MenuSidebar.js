@@ -8,14 +8,8 @@ const MenuSidebar = ({user}) => {
 
     return (
         <aside className="main-sidebar sidebar-dark-primary elevation-4">
-            <Link to="/" className="brand-link">
-                <img
-                    src="/img/logo.png"
-                    alt="AdminLTE Logo"
-                    className="brand-image img-circle elevation-3"
-                    style={{opacity: '.8'}}
-                />
-                <span className="brand-text font-weight-light">AdminLTE 3</span>
+            <Link to="/" className="brand-link text-center">
+                <span className="brand-text font-weight-dark">Drive Safe</span>
             </Link>
             <div className="sidebar">
                 <div className="user-panel mt-3 pb-3 mb-3 d-flex">
@@ -46,9 +40,9 @@ const MenuSidebar = ({user}) => {
                             </NavLink>
                         </li>
                         <li className="nav-item">
-                            <NavLink to="/profile" exact className="nav-link">
+                            <NavLink to="/customer" exact className="nav-link">
                                 <i className="nav-icon fas fa-user" />
-                                <p>{t('menusidebar.label.profile')}</p>
+                                <p>Customer</p>
                             </NavLink>
                         </li>
                     </ul>

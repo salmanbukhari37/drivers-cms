@@ -6,23 +6,14 @@ import {Gatekeeper} from 'gatekeeper-client-sdk';
 import Dashboard from '@pages/Dashboard';
 import Profile from '@pages/profile/Profile';
 
-import Header from './header/Header';
-import Footer from './footer/Footer';
-import MenuSidebar from './menu-sidebar/MenuSidebar';
 import PageLoading from '../../components/page-loading/PageLoading';
 import * as ActionTypes from '../../store/actions';
+import PrivateTwoColumns from '@app/modules/layouts/PrivateTwoColumns';
+import Customer from '@app/customer/containers/Customer';
 
 const Main = ({onUserLoad}) => {
     const [appLoadingState, updateAppLoading] = useState(false);
-    const [menusidebarState, updateMenusidebarState] = useState({
-        isMenuSidebarCollapsed: false
-    });
-
-    const toggleMenuSidebar = () => {
-        updateMenusidebarState({
-            isMenuSidebarCollapsed: !menusidebarState.isMenuSidebarCollapsed
-        });
-    };
+    
 
     useEffect(() => {
         updateAppLoading(true);
@@ -39,19 +30,6 @@ const Main = ({onUserLoad}) => {
         return () => {};
     }, [onUserLoad]);
 
-    document.getElementById('root').classList.remove('register-page');
-    document.getElementById('root').classList.remove('login-page');
-    document.getElementById('root').classList.remove('hold-transition');
-
-    document.getElementById('root').className += ' sidebar-mini';
-
-    if (menusidebarState.isMenuSidebarCollapsed) {
-        document.getElementById('root').classList.add('sidebar-collapse');
-        document.getElementById('root').classList.remove('sidebar-open');
-    } else {
-        document.getElementById('root').classList.add('sidebar-open');
-        document.getElementById('root').classList.remove('sidebar-collapse');
-    }
 
     let template;
 
@@ -60,26 +38,14 @@ const Main = ({onUserLoad}) => {
     } else {
         template = (
             <>
-                <Header toggleMenuSidebar={toggleMenuSidebar} />
-
-                <MenuSidebar />
-
+            <PrivateTwoColumns>
                 <div className="content-wrapper">
                     <div className="pt-3" />
                     <section className="content">
-                        <Switch>
-                            <Route exact path="/profile" component={Profile} />
-                            <Route exact path="/" component={Dashboard} />
-                        </Switch>
+                        <Dashboard />
                     </section>
                 </div>
-                <Footer />
-                <div
-                    id="sidebar-overlay"
-                    role="presentation"
-                    onClick={toggleMenuSidebar}
-                    onKeyDown={() => {}}
-                />
+            </PrivateTwoColumns>
             </>
         );
     }

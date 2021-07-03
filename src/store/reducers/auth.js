@@ -1,10 +1,11 @@
 import * as ActionTypes from '../actions';
 
 const initialState = {
-    isLoggedIn: !!localStorage.getItem('token'),
+    // isLoggedIn: !!localStorage.getItem('token'),
+    isLoggedIn: true,
     token: localStorage.getItem('token'),
     currentUser: {
-        email: 'mail@example.com',
+        email: 'salmanbukhari37@gmail.com',
         picture: null
     }
 };
