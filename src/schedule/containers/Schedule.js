@@ -68,6 +68,7 @@ function Schedule({dispatch, formData, passengersList}) {
     }
 
     const saveScheduleHandler = () => {
+        const ids = passengersList?.map(data => data?._id);
         const payload =  {
             // passenger: data?._id,
             // pickLocation: data?.location_tmp,
@@ -78,7 +79,7 @@ function Schedule({dispatch, formData, passengersList}) {
             droplong: dropCoordinates?.lng,
             // rideStatus: formData?.rideStatus,
             pickDateTime: formData?.pickDate,
-            passenger: passengersList
+            passenger: ids
         }
         
         dispatch(genericAction.callGenericAsync(payload, 'api/schedule', 'post', (res) => {
