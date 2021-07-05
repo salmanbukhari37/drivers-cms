@@ -35,7 +35,9 @@ const InnerForm = ({
     jobAreaProps,
     designationProps,
     statusProps,
-    mode
+    mode,
+    locationCodeProps,
+    temporaryData
 }) => {
     return (
         <Modal isOpen={modal} toggle={toggle} className={className} centered>
@@ -47,9 +49,9 @@ const InnerForm = ({
                     <Row>
                         <Col>
                             <FormGroup>
-                                <Label for="staff">Staff #</Label>
-                                <Input size="sm" tag={Field} name="staff" id="staff" placeholder="Staff #" className={touched && touched.staff ? (errors && errors.staff ? 'is-invalid' : 'is-valid') : ''} />
-                                <ErrorMessage component={FormFeedback} name="staff" />
+                                <Label for="staffNo">Staff #</Label>
+                                <Input size="sm" tag={Field} name="staffNo" id="staffNo" placeholder="Staff #" className={touched && touched.staffNo ? (errors && errors.staffNo ? 'is-invalid' : 'is-valid') : ''} />
+                                <ErrorMessage component={FormFeedback} name="staffNo" />
                             </FormGroup>
                         </Col>
                         <Col>
@@ -71,7 +73,7 @@ const InnerForm = ({
                                     onChange={handleChange}
                                     className={touched && touched.job_area ? (errors && errors.job_area ? 'is-invalid form-control form-control-sm' : 'is-valid form-control form-control-sm') : 'form-control form-control-sm'}>
                                     <option value="">Please select</option>
-                                    {jobAreaProps?.map(job => <option value={job.value}>{job.title}</option>)}
+                                    {jobAreaProps?.map(job => <option value={job.value} selected={temporaryData?.job_area == job.value }>{job.title}</option>)}
                                 </select>
                                 <ErrorMessage component={FormFeedback} name="job_area" />
                             </FormGroup>
@@ -86,7 +88,7 @@ const InnerForm = ({
                                     onChange={handleChange}
                                     className={touched && touched.designation ? (errors && errors.designation ? 'is-invalid form-control form-control-sm' : 'is-valid form-control form-control-sm') : 'form-control form-control-sm'}>
                                     <option value="">Please select</option>
-                                    {designationProps?.map(designation => <option value={designation.value}>{designation.title}</option>)}
+                                    {designationProps?.map(designation => <option value={designation.value} selected={temporaryData?.designation == designation.value }>{designation.title}</option>)}
                                 </select>
                                 <ErrorMessage component={FormFeedback} name="designation" />
                             </FormGroup>
@@ -96,15 +98,42 @@ const InnerForm = ({
                     <Row>
                         <Col>
                             <FormGroup>
-                                <Label for="pick_from">Pick From</Label>
+                                <Label for="pick_from">Address</Label>
                                 <AutoComplete address={pickAddress} setAddress={setPickAddress} handleSelect={handlePickSelect} />
                                 
                             </FormGroup>
                         </Col>
                         <Col>
                             <FormGroup>
-                                <Label for="location">Location</Label>
+                                <Label for="location">Temp Address</Label>
                                 <AutoComplete address={locAddress} setAddress={setLocAddress} handleSelect={handleLocSelect} />
+                            </FormGroup>
+                        </Col>
+                        
+                    </Row>
+
+
+                    <Row>
+                        <Col>
+                            <FormGroup>
+                                <Label for="location_code">Location Code</Label>
+                                <select
+                                    name="location_code"
+                                    id="location_code"
+                                    size="sm"
+                                    onChange={handleChange}
+                                    className={touched && touched.location_code ? (errors && errors.location_code ? 'is-invalid form-control form-control-sm' : 'is-valid form-control form-control-sm') : 'form-control form-control-sm'}>
+                                    <option value="">Please select</option>
+                                    {locationCodeProps?.map(location => <option value={location.value} selected={temporaryData?.location_code === location.value}>{location.title}</option>)}
+                                </select>
+                                
+                            </FormGroup>
+                        </Col>
+                        <Col>
+                            <FormGroup>
+                                <Label for="pick_from">Pick From</Label>
+                                <Input size="sm" tag={Field} name="pick_from" id="pick_from" placeholder="Pick From" className={touched && touched.phone ? (errors && errors.phone ? 'is-invalid' : 'is-valid') : ''} />
+                                <ErrorMessage component={FormFeedback} name="pick_from" />
                             </FormGroup>
                         </Col>
                         
@@ -113,16 +142,16 @@ const InnerForm = ({
                     <Row>
                         <Col>
                             <FormGroup>
-                                <Label for="landline">Landline #</Label>
-                                <Input size="sm" tag={Field} name="landline" id="landline" placeholder="landline" className={touched && touched.landline ? (errors && errors.landline ? 'is-invalid' : 'is-valid') : ''} />
-                                <ErrorMessage component={FormFeedback} name="landline" />
+                                <Label for="phone">Phone #</Label>
+                                <Input size="sm" tag={Field} name="phone" id="phone" placeholder="phone" className={touched && touched.phone ? (errors && errors.phone ? 'is-invalid' : 'is-valid') : ''} />
+                                <ErrorMessage component={FormFeedback} name="phone" />
                             </FormGroup>
                         </Col>
                         <Col>
                             <FormGroup>
-                                <Label for="cellphone">Cell #</Label>
-                                <Input size="sm" tag={Field} name="cellphone" id="cellphone" placeholder="cellphone" className={touched && touched.cellphone ? (errors && errors.cellphone ? 'is-invalid' : 'is-valid') : ''} />
-                                <ErrorMessage component={FormFeedback} name="cellphone" />
+                                <Label for="cell">Cell #</Label>
+                                <Input size="sm" tag={Field} name="cell" id="cell" placeholder="cell" className={touched && touched.cell ? (errors && errors.cell ? 'is-invalid' : 'is-valid') : ''} />
+                                <ErrorMessage component={FormFeedback} name="cell" />
                             </FormGroup>
                         </Col>
                     </Row>
@@ -138,16 +167,9 @@ const InnerForm = ({
                                     onChange={handleChange}
                                     className={touched && touched.status ? (errors && errors.status ? 'is-invalid form-control form-control-sm' : 'is-valid form-control form-control-sm') : 'form-control form-control-sm'}>
                                     <option value="">Please select</option>
-                                    {statusProps?.map(status => <option value={status.value}>{status.title}</option>)}
+                                    {statusProps?.map(status => <option value={status.value} selected={temporaryData?.status == status.value }>{status.title}</option>)}
                                 </select>
                                 <ErrorMessage component={FormFeedback} name="status" />
-                            </FormGroup>
-                        </Col>
-                        <Col>
-                            <FormGroup>
-                                <Label for="password">Password</Label>
-                                <Input size="sm" tag={Field} type="password" name="password" id="password" placeholder="Cell Phone" className={touched && touched.password ? (errors && errors.password ? 'is-invalid' : 'is-valid') : ''} />
-                                <ErrorMessage component={FormFeedback} name="password" />
                             </FormGroup>
                         </Col>
                     </Row>
@@ -175,35 +197,45 @@ const CustomerForm = withFormik({
     enableReinitialize: true,
     mapPropsToValues: ({ temporaryData, locCoordinates, pickCoordinates }) => {
         return {
-            staff: temporaryData && temporaryData.staff,
-            name: temporaryData && temporaryData.name,
+            staffNo: temporaryData && temporaryData.staff_no,
+            name: temporaryData && temporaryData.fullname,
             job_area: temporaryData && temporaryData.job_area,
+            location_code: temporaryData && temporaryData?.location_code,
             designation: temporaryData && temporaryData.designation,
-            pickfromCoordinates: temporaryData && pickCoordinates,
+            pick_from: temporaryData && temporaryData?.pick_from,
             locCoordinates: temporaryData && locCoordinates,
-            landline: temporaryData && temporaryData.landline,
-            cellphone: temporaryData && temporaryData.cellphone,
-            status: temporaryData && temporaryData.status,
+            phone: temporaryData && temporaryData.phone,
+            cell: temporaryData && temporaryData.cell,
+            status: temporaryData && temporaryData?.status,
             password: temporaryData && temporaryData.password,
-            id: temporaryData && temporaryData?.id
+            id: temporaryData && temporaryData?._id
         }
     },
     validationSchema: Yup.object().shape({
-        staff: Yup.string().required("Staff is required"),
+        staffNo: Yup.string().required("Staff is required"),
         name: Yup.string().required("Name is required"),
         job_area: Yup.string().required("Job area is required"),
         designation: Yup.string().required("Designation is required"),
-        landline: Yup.string().required("Landline is required"),
-        cellphone: Yup.string().required("Cellphone is required"),
+        phone: Yup.string().required("Landline is required"),
+        cell: Yup.string().required("Cellphone is required"),
         status: Yup.string().required("Status is required"),
-        password: Yup.string().required("Password is required"),
     }),
     handleSubmit: (values, { props: { submitCustomerHandler, closeModal, pickCoordinates, locCoordinates }, setSubmitting, resetForm }) => {
-        values.pickfromCoordinates = pickCoordinates;
-        values.locCoordinates = locCoordinates;
+        values.address = pickCoordinates;
+        values.address_tmp = locCoordinates;
         setSubmitting(true);
         submitCustomerHandler({payload: values, closeModal, setSubmitting, resetForm});
     },
 })(InnerForm);
+
+
+CustomerForm.defaultProps = {
+    locationCodeProps: [
+        {title: "isb", value: "1"},
+        {title: "fsd", value: "2"},
+        {title: "mtn", value: "3"},
+        {title: "khi", value: "4"},
+    ]
+}
 
 export default CustomerForm

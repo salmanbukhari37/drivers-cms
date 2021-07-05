@@ -4,7 +4,7 @@ import * as genericAction from './actions';
 
 function* workerSaga({ payload, callback, method, endpoint }) {
     try {
-        const response = yield call(Api[method], endpoint, payload);
+        const response = yield call(Api[method], endpoint, payload );
         if (typeof callback === "function") {
             callback(response.data);
         }

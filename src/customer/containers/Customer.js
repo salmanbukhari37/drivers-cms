@@ -15,14 +15,24 @@ import  {
   getLatLng
 } from 'react-places-autocomplete';
 import * as genericAction from 'generic/actions';
+import DeleteModal from '@app/pages/confirmation/DeleteModal';
+import PageLoading from 'components/page-loading/PageLoading';
 
 function Customer({dispatch}) {
+  const [appLoadingState, updateAppLoading] = useState(false);
   const [temporaryData, setTemporaryData] = useState({});
   const [mode, setMode] = useState({
     edit: false,
   });
   const [modal, setModal] = useState(false);
   const toggle = () => setModal(!modal);
+
+  const [deleteModal, setDeleteModal] = useState(false);
+  const deleteToggle = () => {
+    setDeleteModal(!deleteModal)
+  };
+
+  const [uniqueId, setUniqueId] = useState(1);
   const [pickAddress, setPickAddress] = useState("");
   const [pickCoordinates, setPickCoordinates] = useState({
       lat: null,
@@ -35,23 +45,22 @@ function Customer({dispatch}) {
       lng: null
   });
 
-  const [data, setData] = useState(
-    [
-      {name: "Salman Bukhari", staff: "75441", designation: "React Developer", status: "open"},
-      {name: "Steve", staff: "65344", designation: "Full Stack Developer", status: "open"},
-      {name: "Jack", staff: "52311", designation: "Backend Developer", status: "close"},
-      {name: "John Doe", staff: "42245", designation: "Graphic Designer", status: "open"}
-    ]
-  );
+  const [data, setData] = useState([]);
 
   useEffect(() => {
-    getCustomersAsync();
+    if (data.length === 0) {
+      getCustomersAsync();
+
+    }
   }, [])
 
   const getCustomersAsync = () => {
-    dispatch(genericAction.callGenericGetterAsync('/api/customer', (res) => {
-      if (res) 
-        setData(res?.data?.data);
+    updateAppLoading(true);
+    dispatch(genericAction.callGenericGetterAsync('/api/admin/users', (res) => {
+      if (res) {
+        setData(res?.data);
+        updateAppLoading(false);
+      }
     }));
   }
 
@@ -69,35 +78,42 @@ function Customer({dispatch}) {
     setPickCoordinates(latLng)
   }
 
-  const deleteCustomerHandler = ({id}) => {
-    if (id) {
-      dispatch(genericAction.callGenericAsync({}, `/api/customer/${id}`, 'delete', (res) => {
-        if(res) {
-          closeModal(false);
-          setSubmitting(false);
-          resetForm();
-        }
-      }))
-    }else {
-      alert("Data not found.");
-    }
+  const deleteCustomerHandler = () => {
+      if (uniqueId) {
+        dispatch(genericAction.callGenericAsync({}, `/api/admin/user-save/${uniqueId}`, 'delete', (res) => {
+          if(res) {
+            getCustomersAsync();
+          }
+        }))
+      }else {
+        alert("Data not found.");
+      }
   }
 
   const submitCustomerHandler = ({payload, closeModal, setSubmitting, resetForm }) => {
+    payload.address = locAddress;
+    payload.address_tmp = pickAddress;
+    payload.lat = locCoordinates?.lat;
+    payload.long = locCoordinates?.lng;
+    
     if (mode?.edit) {
-      dispatch(genericAction.callGenericAsync(payload, '/api/customer', 'put', (res) => {
+      dispatch(genericAction.callGenericAsync(payload, `/api/admin/user-save/${payload.id}`, 'put', (res) => {
         if(res) {
-          closeModal(false);
+          toggle();
           setSubmitting(false);
           resetForm();
+          getCustomersAsync();
+          setTemporaryData({})
         }
       }))
     } else {
-      dispatch(genericAction.callGenericAsync(payload, '/api/customer', 'post', (res) => {
+      dispatch(genericAction.callGenericAsync(payload, '/api/admin/user-save', 'post', (res) => {
         if(res) {
-          closeModal(false);
+          toggle();
           setSubmitting(false);
           resetForm();
+          getCustomersAsync();
+          setTemporaryData({})
         }
       }))
     }
@@ -123,14 +139,13 @@ function Customer({dispatch}) {
   const columns = [
     {
         name: "Name",
-        selector: "name",
+        selector: "fullname",
         sortable: true
     },
     {
         name: "Staff",
-        selector: "staff",
+        selector: "type",
         sortable: true,
-        wrap: true
     },
     {
         name: "Designation",
@@ -139,7 +154,9 @@ function Customer({dispatch}) {
     },
     {
         name: "Status",
-        selector: "status",
+        selector: (row) => {
+          return row?.status ? "true" : "false";
+        },
         sortable: true
     },
     {
@@ -158,7 +175,10 @@ function Customer({dispatch}) {
     {
       name: "",
         cell: (data) => {
-          return (<i className="text-danger fas fa-trash-alt" onClick={() => deleteCustomerHandler({id: data?.id})}/>)
+          return (<i className="text-danger fas fa-trash-alt" onClick={() => {
+            setUniqueId(data?._id);
+            deleteToggle();
+          }}/>)
       },
       maxWidth: "5%",
     }
@@ -167,54 +187,59 @@ function Customer({dispatch}) {
   
 
   return (
-    <PrivateTwoColumns pageTitle="Customer">
-       <Content>
-          <Content.Header>
-            <Content.Title>Create Customer</Content.Title>
-          </Content.Header>
-          <Content.Wrapper>
-            <Card className="card-info card-outline">
-              <CardHeader>
-                <div>
-                  <h3 class="card-title">Customer Information</h3>
-                </div>
-                <div className="text-right">
-                  <Button color="info" size="sm" onClick={() => {
-                    toggle()
-                    setMode({
-                      edit: false
-                    });
-                    setTemporaryData({});
-                  }}>+ Add new customer</Button>
-                </div>
-              </CardHeader>
-              <CardBody>
-                <CustomerForm 
-                  modal={modal} 
-                  toggle={toggle}
-                  pickAddress={pickAddress}
-                  setPickAddress={setPickAddress}
-                  handlePickSelect={handlePickSelect}
-                  pickCoordinates={pickCoordinates}
-                  setPickCoordinates={setPickCoordinates}
-                  handleLocSelect={handleLocSelect}
-                  locCoordinates={locCoordinates}
-                  setLocCoordinates={setLocCoordinates}
-                  locAddress={locAddress}
-                  setLocAddress={setLocAddress}
-                  submitCustomerHandler={submitCustomerHandler}
-                  designationProps={designationProps}
-                  jobAreaProps={jobAreaProps}
-                  statusProps={statusProps}
-                  temporaryData={temporaryData}
-                  mode={mode}
-                />
-                <DataTableListing columns={columns} data={data} title="Customer Listing" />
-              </CardBody>
-            </Card>
-          </Content.Wrapper>
-      </Content>
-    </PrivateTwoColumns>
+    <>
+    {appLoadingState ? <PageLoading /> :
+      <PrivateTwoColumns pageTitle="Customer">
+        <Content>
+            <Content.Header>
+              <Content.Title>Create Customer</Content.Title>
+            </Content.Header>
+            <Content.Wrapper>
+              <Card className="card-info card-outline">
+                <CardHeader>
+                  <div>
+                    <h3 class="card-title">Customer Information</h3>
+                  </div>
+                  <div className="text-right">
+                    <Button color="info" size="sm" onClick={() => {
+                      toggle()
+                      setMode({
+                        edit: false
+                      });
+                      setTemporaryData({});
+                    }}>+ Add new customer</Button>
+                  </div>
+                </CardHeader>
+                <CardBody>
+                  <CustomerForm 
+                    modal={modal} 
+                    toggle={toggle}
+                    pickAddress={pickAddress}
+                    setPickAddress={setPickAddress}
+                    handlePickSelect={handlePickSelect}
+                    pickCoordinates={pickCoordinates}
+                    setPickCoordinates={setPickCoordinates}
+                    handleLocSelect={handleLocSelect}
+                    locCoordinates={locCoordinates}
+                    setLocCoordinates={setLocCoordinates}
+                    locAddress={locAddress}
+                    setLocAddress={setLocAddress}
+                    submitCustomerHandler={submitCustomerHandler}
+                    designationProps={designationProps}
+                    jobAreaProps={jobAreaProps}
+                    statusProps={statusProps}
+                    temporaryData={temporaryData}
+                    mode={mode}
+                  />
+                  <DataTableListing columns={columns} data={data} title="Customer Listing" />
+                </CardBody>
+              </Card>
+            </Content.Wrapper>
+            <DeleteModal modal={deleteModal} toggle={deleteToggle} deleteCustomer={deleteCustomerHandler}/>
+        </Content>
+      </PrivateTwoColumns>
+    }
+    </>
   );
 }
 

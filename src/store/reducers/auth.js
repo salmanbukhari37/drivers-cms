@@ -1,22 +1,25 @@
 import * as ActionTypes from '../actions';
 
 const initialState = {
-    // isLoggedIn: !!localStorage.getItem('token'),
-    isLoggedIn: true,
+    isLoggedIn: !!localStorage.getItem('token'),
     token: localStorage.getItem('token'),
     currentUser: {
-        email: 'salmanbukhari37@gmail.com',
-        picture: null
+        email: localStorage.getItem('email')
     }
+
 };
 
 const reducer = (state = initialState, action) => {
     if (action.type === ActionTypes.LOGIN_USER) {
-        localStorage.setItem('token', action.token);
+        localStorage.setItem('token', action?.data?.token);
+        localStorage.setItem('email', action?.data?.email);
         return {
             ...state,
             isLoggedIn: true,
-            token: action.token
+            currentUser: {
+                email: action?.data?.email
+            },
+            token: action?.data?.token
         };
     }
 

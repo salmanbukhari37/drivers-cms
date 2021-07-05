@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
 import {useFormik} from 'formik';
@@ -6,8 +6,9 @@ import {useTranslation} from 'react-i18next';
 
 import * as Yup from 'yup';
 import * as ActionTypes from '../../store/actions';
+import * as genericActions from 'generic/actions';
 
-const Login = () => {
+const Login = (props) => {
     const [t] = useTranslation();
 
     const printFormError = (formik, key) => {
@@ -31,8 +32,12 @@ const Login = () => {
                 .max(30, 'Must be 30 characters or less')
                 .required('Required')
         }),
-        onSubmit: () => {
-            // console.log(values);
+        onSubmit: (values) => {
+            const {dispatch} = props;
+            dispatch(genericActions.callGenericAsync(values, '/api/auth/admin-login', 'post', (res) => {
+                dispatch({type: ActionTypes.LOGIN_USER, data: res?.data});
+            }))
+
         }
     });
 
@@ -103,8 +108,10 @@ const Login = () => {
     );
 };
 
-const mapDispatchToProps = (dispatch) => ({
-    onUserLogin: (token) => dispatch({type: ActionTypes.LOGIN_USER, token})
-});
 
-export default connect(null, mapDispatchToProps)(Login);
+const mapStateToProps = ({ auth }) => {
+    return {
+      ...auth
+    }
+  }
+export default connect(mapStateToProps)(Login);

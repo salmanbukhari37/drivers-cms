@@ -45,6 +45,13 @@ const MenuSidebar = ({user}) => {
                                 <p>Customer</p>
                             </NavLink>
                         </li>
+
+                        <li className="nav-item">
+                            <NavLink to="/schedule" exact className="nav-link">
+                                <i className="nav-icon fas fa-user" />
+                                <p>Schedule</p>
+                            </NavLink>
+                        </li>
                     </ul>
                 </nav>
             </div>

@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 
 const PublicRoute = ({children, isLoggedIn, ...rest}) => {
     const isAuthenticated = isLoggedIn || localStorage.getItem('token');
-
+    console.log(isAuthenticated);
     return (
         <Route
             {...rest}
@@ -12,7 +12,7 @@ const PublicRoute = ({children, isLoggedIn, ...rest}) => {
                 isAuthenticated ? (
                     <Redirect
                         to={{
-                            pathname: '/',
+                            pathname: '/dashboard',
                             state: {from: location}
                         }}
                     />

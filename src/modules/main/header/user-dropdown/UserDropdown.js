@@ -62,7 +62,7 @@ const UserDropdown = ({user, onUserLogout}) => {
                 data-toggle="dropdown"
             >
                 <img
-                    src={user.picture || '/img/default-profile.png'}
+                    src={'/img/default-profile.png'}
                     className="user-image img-circle elevation-2"
                     alt="User"
                 />
@@ -71,7 +71,7 @@ const UserDropdown = ({user, onUserLogout}) => {
             <ul className={className}>
                 <li className="user-header bg-primary">
                     <img
-                        src={user.picture || '/img/default-profile.png'}
+                        src={'/img/default-profile.png'}
                         className="img-circle elevation-2"
                         alt="User"
                     />

@@ -8,6 +8,7 @@ import PublicRoute from './routes/PublicRoute';
 import PrivateRoute from './routes/PrivateRoute';
 
 import './App.scss';
+import Schedule from 'schedule/containers/Schedule';
 
 const App = () => {
     return (
@@ -16,6 +17,9 @@ const App = () => {
                 <PublicRoute exact path="/login">
                     <Login />
                 </PublicRoute>
+                <PrivateRoute path="/schedule">
+                    <Schedule />
+                </PrivateRoute>
                 <PrivateRoute path="/customer">
                     <Customer />
                 </PrivateRoute>

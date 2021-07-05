@@ -28,7 +28,7 @@ const Main = ({onUserLoad}) => {
         };
         fetchProfile();
         return () => {};
-    }, [onUserLoad]);
+    }, []);
 
 
     let template;
