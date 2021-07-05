@@ -1,9 +1,11 @@
 import {createStore, combineReducers, applyMiddleware, compose} from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import authReducer from './reducers/auth';
+import scheduleReducer from '../schedule/reducers';
 import rootSaga from '../sagas';
 const rootReducer = combineReducers({
-    auth: authReducer
+    auth: authReducer,
+    schedule: scheduleReducer
 });
 
 const sagaMiddleware = createSagaMiddleware();

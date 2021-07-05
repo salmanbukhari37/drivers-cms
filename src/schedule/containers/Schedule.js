@@ -12,12 +12,22 @@ import DataTableListing from 'pages/dataTable/DataTableListing';
 import * as genericAction from 'generic/actions';
 import PageLoading from 'components/page-loading/PageLoading';
 import ScheduleModal from '@app/schedule/components/ScheduleModal';
+import  {
+    geocodeByAddress,
+    getLatLng
+} from 'react-places-autocomplete';
+import produce from 'immer';
+import * as actions from '../actions';
 
-function Schedule({dispatch}) {
+function Schedule({dispatch, formData, passengersList}) {
     const [appLoadingState, updateAppLoading] = useState(false);
     const [modal, setModal] = useState(false);
     const toggle = () => setModal(!modal);
-
+    const [dropAddress, setDropAddress] = useState("");
+    const [dropCoordinates, setDropCoordinates] = useState({
+        lat: null,
+        lng: null
+    });
     const [data, setData] = useState([]);
 
     const getScheduleAsync = () => {
@@ -27,9 +37,56 @@ function Schedule({dispatch}) {
         }))
     }
 
+    const loadPassengersAsync = () => {
+        const {passengerNo} = formData;
+
+        dispatch(genericAction.callGenericGetterAsync(`/api/users/${passengerNo}`, (res) => {
+            if (res?.data)
+                dispatch(actions.setSchedulePassengersList(res?.data));
+        }))
+        
+    }
+
+    const setFormData = (value, name) => {
+        const producedData = produce(formData, drafState => {
+            drafState[name] = value;
+        })
+        dispatch( actions.setScheduleFormData(producedData) );
+    }
+
     useEffect(() => {
         getScheduleAsync();
     },[]);
+
+
+    const handleDropSelect = async (value) => {
+        const results = await geocodeByAddress(value);
+        const latLng = await getLatLng(results[0]);
+        setDropAddress( value );
+        setDropCoordinates(latLng);
+        setFormData(value, 'dropLocation');
+    }
+
+    const saveScheduleHandler = () => {
+        const payload =  {
+            // passenger: data?._id,
+            // pickLocation: data?.location_tmp,
+            dropLocation: dropAddress,
+            picklat: data?.lat,
+            pickLong: data?.lng,
+            droplat: dropCoordinates?.lat,
+            droplong: dropCoordinates?.lng,
+            // rideStatus: formData?.rideStatus,
+            pickDateTime: formData?.pickDate,
+            passenger: passengersList
+        }
+        
+        dispatch(genericAction.callGenericAsync(payload, 'api/schedule', 'post', (res) => {
+            if(res) {
+              console.log(res);
+            }
+        }))
+    }
 
     const columns = [
         {
@@ -108,7 +165,17 @@ function Schedule({dispatch}) {
                     </CardBody>
                 </Card>
                 </Content.Wrapper>
-                <ScheduleModal modal={modal} toggle={toggle}  />
+                <ScheduleModal 
+                    modal={modal} 
+                    toggle={toggle} 
+                    handleDropSelect={handleDropSelect} 
+                    dropAddress={dropAddress}
+                    setDropAddress={setDropAddress}
+                    setFormData={setFormData}
+                    loadPassengers={loadPassengersAsync}
+                    passengersList={passengersList}
+                    saveScheduleHandler={saveScheduleHandler}
+                />
             </Content>
         </PrivateTwoColumns>
         }
@@ -116,9 +183,10 @@ function Schedule({dispatch}) {
     )
 }
 
-const mapStateToProps = ({ auth }) => {
+const mapStateToProps = ({ auth, schedule }) => {
     return {
-      ...auth
+      ...auth,
+      ...schedule
     }
   }
   export default connect(mapStateToProps)(Schedule);

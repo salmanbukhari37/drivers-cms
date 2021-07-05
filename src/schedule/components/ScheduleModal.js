@@ -1,7 +1,9 @@
 import React from 'react'
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Form, FormGroup, Label, Input, FormText, Row, Col } from 'reactstrap';
+import AutoComplete from '@app/customer/compnents/AutoComplete';
+import ScheduleTable from '@app/schedule/components/ScheduleTable';
 
-function ScheduleModal({modal, toggle, className}) {
+function ScheduleModal({modal, toggle, className, dropAddress, setDropAddress, handleDropSelect, setFormData, loadPassengers, passengersList, saveSchedule, saveScheduleHandler}) {
     return (
         <Modal isOpen={modal} toggle={toggle} className={className} size="xl">
             <ModalHeader toggle={toggle}>Modal title</ModalHeader>
@@ -10,25 +12,33 @@ function ScheduleModal({modal, toggle, className}) {
                     <Col>
                         <FormGroup>
                             <Label for="flight">Flight No</Label>
-                            <Input type="number" name="email" id="flight" placeholder="Flight No" />
+                            <Input type="number" name="flightNo" id="flight" placeholder="Flight No" className="form-control-sm" onChange={(e) =>{
+                                setFormData(e.target.value, 'flightNo');
+                            }}/>
                         </FormGroup>
                     </Col>
                     <Col>
                         <FormGroup>
-                            <Label for="flight">Date</Label>
-                            <Input type="date" name="email" id="flight" placeholder="Flight No" />
+                            <Label for="date">Date</Label>
+                            <Input type="date" name="date" id="date" placeholder="Date" className="form-control-sm" onChange={(e) =>{
+                                setFormData(e.target.value, 'pickDate');
+                            }}/>
                         </FormGroup>
                     </Col>
                     <Col>
                         <FormGroup>
-                            <Label for="flight">Time</Label>
-                            <Input type="time" name="email" id="flight" placeholder="Flight No" />
+                            <Label for="time">Time</Label>
+                            <Input type="time" name="time" id="time" placeholder="Time" className="form-control-sm" onChange={(e) =>{
+                                setFormData(e.target.value, 'pickDateTime');
+                            }}/>
                         </FormGroup>
                     </Col>
                     <Col>
                         <FormGroup>
                             <Label for="flight">Status</Label>
-                            <select className="form-control">
+                            <select className="form-control form-control-sm" onChange={(e) =>{
+                                setFormData(e.target.value, 'rideStatus');
+                            }}>
                                 <option>Please select</option>
                                 {[{title: 'Pickup', value: 'pickup'}].map(status=> <option value={status.value}>{status.title}</option>)}
                             </select>
@@ -38,31 +48,38 @@ function ScheduleModal({modal, toggle, className}) {
                 <Row>
                     <Col sm="3">
                         <FormGroup>
-                            <Label for="flight">P - No</Label>
-                            <Input type="text" name="email" id="flight" placeholder="Flight No" />
+                            <Label for="passengerNo">P - No</Label>
+                            <Input 
+                                type="text" 
+                                id="passengerNo" 
+                                placeholder="Passenger No"
+                                className="form-control-sm"
+                                onChange={(e) =>{
+                                    setFormData(e.target.value, 'passengerNo');
+                                }}
+                            />
                         </FormGroup>
                     </Col>
                     <Col sm="3">
                         <FormGroup>
                             <Label for="flight">Drop Location</Label>
-                            <Input type="text" name="email" id="flight" placeholder="Flight No" />
+                            <AutoComplete address={dropAddress} setAddress={setDropAddress} handleSelect={handleDropSelect} />
                         </FormGroup>
                     </Col>
-                    
+                    <Col sm="3">
+                        <FormGroup className="mt-4">
+                            <Button color="info" block size="sm" onClick={loadPassengers}>Load Data</Button>
+                        </FormGroup>
+                    </Col>
                 </Row>
                 <Row>
-                    <Col>
-                        <FormGroup >
-                            <Button color="info">Load Data</Button>
-                        </FormGroup>
-                    </Col>
+                    <ScheduleTable data={passengersList}/>
                 </Row>
             </ModalBody>
             <div className="m-auto pb-4">
-                <Button color="primary" onClick={toggle}>Save</Button>{' '}
-                <Button color="danger" onClick={toggle}>Clear</Button>{' '}
-                
-                <Button color="secondary" onClick={toggle}>Cancel</Button>
+                <Button color="primary" size="sm" onClick={saveScheduleHandler}>Save</Button>{' '}
+                <Button color="danger" size="sm" onClick={toggle}>Clear</Button>{' '}
+                <Button color="secondary" size="sm" onClick={toggle}>Cancel</Button>
             </div>
         </Modal>
     )
