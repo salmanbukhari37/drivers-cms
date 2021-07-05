@@ -79,7 +79,7 @@ function Schedule({dispatch, formData, passengersList}) {
             droplong: dropCoordinates?.lng,
             // rideStatus: formData?.rideStatus,
             pickDateTime: formData?.pickDate,
-            passenger: ids
+            passenger: passengersList,
         }
         
         dispatch(genericAction.callGenericAsync(payload, 'api/schedule', 'post', (res) => {
